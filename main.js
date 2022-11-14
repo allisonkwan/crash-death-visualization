@@ -56,7 +56,7 @@ d3.csv("traffic.csv", function (csv) {
     .attr("y", 12)
     .attr("font-size", "12px")
     .attr("transform", "translate(-150,0)")
-    .text("Vehicle Crash Deaths per 100,000 People by Age Group, 1975-2020");
+    .text("Vehicle Crash Deaths by Age Group, 1975-2020");
 
   //Labels for Axes
   var yearLabel = d3
@@ -137,7 +137,7 @@ d3.csv("traffic.csv", function (csv) {
   }
   var mousemove = function (d) {
     Tooltip
-      .html("<p class='tooltip'>" + "Year: " + d.Year + "<br><br>" + "Age: " + d.Age + "<br><br>" + "Population: " + d.Population + "<br><br>" + "Deaths: " + d.DNumber + "<br><br>" + "Rate: " + d.Rate)
+      .html("<p class='tooltip'>" + "Year: " + d.Year + "<br><br>" + "Age: " + d.Age + "<br><br>" + "Population: " + d.Population + "<br><br>" + "Deaths: " + d.DNumber + "<br><br>" + "Rate per 100,000 People: " + d.Rate)
       .style("left", (d3.mouse(this)[0] + 70) + "px")
       .style("top", (d3.mouse(this)[1]) + "px");
   }
