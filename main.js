@@ -2,12 +2,30 @@ var width = 800;
 var height = 800;
 
 d3.csv("traffic.csv", function (csv) {
+  
   for (let i = 0; i < csv.length; ++i) {
     csv[i].Year = Number(csv[i].Year)
     csv[i].Population = Number(csv[i].Population);
     csv[i].DNumber = Number(csv[i].DNumber);
     csv[i].Rate = Number(csv[i].Rate);
   }
+
+  var data = csv;
+  var cutoff = 0;
+
+  //Cutoff
+  var main = document.getElementById('myGrid');
+  d3.select(main)
+    .append('p')
+    .append('button')
+    .style("border", "1px solid black")
+    .text('Filter Data')
+    .on('click', function() {
+        // Add code here
+        cutoff = document.getElementById('cutoff').value;
+        console.log(cutoff);
+        updateChart(cutoff);
+  });
 
   var yearExtent = d3.extent(csv, function (row) {
     return row.Year;
@@ -159,17 +177,33 @@ d3.csv("traffic.csv", function (csv) {
   //IMPORTANT: Call brush before appending circles so tooltip & brush can coexist.
   chart1.append("g").call(brush);
 
-  let item = chart1.selectAll('groups').data(csv).enter().append('g')
-    .attr('transform', function (d) {
-      return 'translate(' + xScale(d.Year) + ',' + yScale(d.DNumber) + ')';
-    });
+  function updateChart(cutoff) {
+    data = csv.filter(d => d['Rate'] >= cutoff);
+    console.log(data);
 
-  item.append('circle').attr('r', '5px').attr('opacity', 0.6)
-    .attr('class', function (d) {
-      return whichAgeClass(d.Age);
-    }).on("mouseover", mouseover)
-    .on("mousemove", mousemove)
-    .on("mouseout", mouseleave);
+    let item = chart1.selectAll('.circles').data(data);
+
+    item.exit().remove();
+    
+    var itemEnter = item.enter().append('g').attr('class', 'circles');
+    // .attr('transform', function (d) {
+    //   return 'translate(' + xScale(d.Year) + ',' + yScale(d.DNumber) + ')';
+    // });
+  
+    itemEnter.append('circle').attr('r', '5px').attr('opacity', 0.6)
+      .attr('class', function (d) {
+        return whichAgeClass(d.Age);
+      }).on("mouseover", mouseover)
+      .on("mousemove", mousemove)
+      .on("mouseout", mouseleave);
+
+    itemEnter.merge(item)
+      .attr('transform', function (d) {
+        return 'translate(' + xScale(d.Year) + ',' + yScale(d.DNumber) + ')';
+      });
+  }
+
+  updateChart(cutoff); 
 
   function brushstart() {
     chart1.selectAll("circle").attr("class", "non_brushed");
