@@ -14,7 +14,7 @@ d3.csv("traffic.csv", function (csv) {
   var cutoff = 0;
 
   //Cutoff
-  var main = document.getElementById('myGrid');
+  var main = document.getElementById('chart5');
   d3.select(main)
     .append('p')
     .append('button')
@@ -135,7 +135,7 @@ d3.csv("traffic.csv", function (csv) {
     }
   }
 
-  var Tooltip = d3.select("#chart1")
+  var Tooltip = d3.select("#chart6")
     .append("div")
     .style("opacity", 0)
     .attr("class", "tooltip")

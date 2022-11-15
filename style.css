@@ -27,14 +27,26 @@ path.domain {
 
 #chart1 {
 	float: left;
+	margin: 20px;
 }
 
 #myGrid {
 	display: grid;
 	grid-template-rows: auto auto;
+	float: left;
+	margin-top: 30px;
+	margin-left: 20px;
 }
 
-#chart3 {
+#grid2 {
+	display: grid;
+	grid-template-rows: auto auto;
+	float: left;
+	margin-top: 30px;
+	margin-left: 20px;
+}
+
+/* #chart3 {
 	float: left;
 	margin-top: 30px;
 	margin-left: 20px;
@@ -45,6 +57,12 @@ path.domain {
 	margin-top: 30px;
 	margin-left: 20px;
 }
+
+#chart5 {
+	float: left;
+	margin-top: 30px;
+	margin-left: 20px;
+} */
 
 .age-group-1 {
 	fill: #fed3d9 !important;
