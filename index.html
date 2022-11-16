@@ -6,6 +6,7 @@
 	<title>Final Project</title>
 	<link href="style.css" type="text/css" rel="stylesheet" />
 	<script src="https://d3js.org/d3.v4.min.js"></script>
+	<script src="https://unpkg.com/d3-simple-slider"></script>
 	<script type="text/javascript" src="main.js"></script>
 </head>
 
@@ -40,12 +41,19 @@
 			<br />
 			<div id="chart5">
 				<u>Cutoff Filter for Death Rate</u><br />
-				<form name="cutoff" id="form">
-					<label for="cutoffFilter" class="show">Cutoff:</label>
-					<input type="text" id="cutoff">
-				</form>
+				<div class="row align-items-center">
+					<div class="col-sm-2">
+						<p>Rate Cutoff: </p>
+						<p id="value-simple"></p>
+					</div>
+					<div class="col-sm">
+						<div id="slider-simple"></div>
+					</div>
+				</div>
+
 			</div>
 			<br />
+
 			<div id="chart6"></div>
 		</div>
 		<div id="grid2">

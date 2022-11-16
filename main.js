@@ -3,11 +3,16 @@ var height = 800;
 
 d3.csv("traffic.csv", function (csv) {
 
+  var minRate = Number.POSITIVE_INFINITY;
+  var maxRate = Number.NEGATIVE_INFINITY;
+
   for (let i = 0; i < csv.length; ++i) {
     csv[i].Year = Number(csv[i].Year)
     csv[i].Population = Number(csv[i].Population);
     csv[i].DNumber = Number(csv[i].DNumber);
     csv[i].Rate = Number(csv[i].Rate);
+    if (csv[i].Rate < minRate) minRate = csv[i].Rate;
+    if (csv[i].Rate > maxRate) maxRate = csv[i].Rate;
   }
 
   var data = csv;
@@ -21,8 +26,7 @@ d3.csv("traffic.csv", function (csv) {
     .style("border", "1px solid black")
     .text('Filter Data')
     .on('click', function () {
-      // Add code here
-      cutoff = document.getElementById('cutoff').value;
+      cutoff = Number(document.getElementById('value-simple').innerHTML);
       console.log(cutoff);
       updateChart(cutoff);
     });
@@ -204,6 +208,29 @@ d3.csv("traffic.csv", function (csv) {
   }
 
   updateChart(cutoff);
+
+  var sliderSimple = d3
+    .sliderBottom()
+    .min(minRate)
+    .max(maxRate)
+    .width(300)
+    .ticks(5)
+    .default(5)
+    .on('onchange', val => {
+      d3.select('p#value-simple').text(d3.format('.1f')(val));
+    });
+
+  var gSimple = d3
+    .select('div#slider-simple')
+    .append('svg')
+    .attr('width', 500)
+    .attr('height', 100)
+    .append('g')
+    .attr('transform', 'translate(30,30)');
+
+  gSimple.call(sliderSimple);
+
+  d3.select('p#value-simple').text(d3.format('.1f')(sliderSimple.value()));
 
   function brushstart() {
     chart1.selectAll("circle").attr("class", "non_brushed");
