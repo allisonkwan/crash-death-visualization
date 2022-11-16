@@ -2,7 +2,7 @@ var width = 800;
 var height = 800;
 
 d3.csv("traffic.csv", function (csv) {
-  
+
   for (let i = 0; i < csv.length; ++i) {
     csv[i].Year = Number(csv[i].Year)
     csv[i].Population = Number(csv[i].Population);
@@ -20,12 +20,12 @@ d3.csv("traffic.csv", function (csv) {
     .append('button')
     .style("border", "1px solid black")
     .text('Filter Data')
-    .on('click', function() {
-        // Add code here
-        cutoff = document.getElementById('cutoff').value;
-        console.log(cutoff);
-        updateChart(cutoff);
-  });
+    .on('click', function () {
+      // Add code here
+      cutoff = document.getElementById('cutoff').value;
+      console.log(cutoff);
+      updateChart(cutoff);
+    });
 
   var yearExtent = d3.extent(csv, function (row) {
     return row.Year;
@@ -181,15 +181,15 @@ d3.csv("traffic.csv", function (csv) {
     data = csv.filter(d => d['Rate'] >= cutoff);
     console.log(data);
 
-    let item = chart1.selectAll('.circles').data(data);
+    let item = chart1.selectAll('.circles').data(data, d => [d.Year, d.Age]);
 
     item.exit().remove();
-    
+
     var itemEnter = item.enter().append('g').attr('class', 'circles');
     // .attr('transform', function (d) {
     //   return 'translate(' + xScale(d.Year) + ',' + yScale(d.DNumber) + ')';
     // });
-  
+
     itemEnter.append('circle').attr('r', '5px').attr('opacity', 0.6)
       .attr('class', function (d) {
         return whichAgeClass(d.Age);
@@ -203,7 +203,7 @@ d3.csv("traffic.csv", function (csv) {
       });
   }
 
-  updateChart(cutoff); 
+  updateChart(cutoff);
 
   function brushstart() {
     chart1.selectAll("circle").attr("class", "non_brushed");
