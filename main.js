@@ -3,16 +3,16 @@ var height = 800;
 
 d3.csv("traffic.csv", function (csv) {
 
-  var minRate = Number.POSITIVE_INFINITY;
-  var maxRate = Number.NEGATIVE_INFINITY;
+  var minDeaths = Number.POSITIVE_INFINITY;
+  var maxDeaths = Number.NEGATIVE_INFINITY;
 
   for (let i = 0; i < csv.length; ++i) {
     csv[i].Year = Number(csv[i].Year)
     csv[i].Population = Number(csv[i].Population);
     csv[i].DNumber = Number(csv[i].DNumber);
     csv[i].Rate = Number(csv[i].Rate);
-    if (csv[i].Rate < minRate) minRate = csv[i].Rate;
-    if (csv[i].Rate > maxRate) maxRate = csv[i].Rate;
+    if (csv[i].DNumber < minDeaths) minDeaths = csv[i].DNumber;
+    if (csv[i].DNumber > maxDeaths) maxDeaths = csv[i].DNumber;
   }
 
   var data = csv;
@@ -34,13 +34,13 @@ d3.csv("traffic.csv", function (csv) {
   var yearExtent = d3.extent(csv, function (row) {
     return row.Year;
   });
-  var numberExtent = d3.extent(csv, function (row) {
-    return row.DNumber;
+  var rateExtent = d3.extent(csv, function (row) {
+    return row.Rate;
   });
 
   // Axis setup
   var xScale = d3.scaleLinear().domain(yearExtent).range([50, 770]);
-  var yScale = d3.scaleLinear().domain(numberExtent).range([770, 30]);
+  var yScale = d3.scaleLinear().domain(rateExtent).range([770, 30]);
 
   var xAxis = d3.axisBottom().scale(xScale).tickFormat(d3.format("d"));
   var yAxis = d3.axisLeft().scale(yScale);
@@ -78,7 +78,7 @@ d3.csv("traffic.csv", function (csv) {
     .attr("y", 12)
     .attr("font-size", "12px")
     .attr("transform", "translate(-150,0)")
-    .text("Vehicle Crash Deaths by Age Group, 1975-2020");
+    .text("Vehicle Crash Death Rate per 100,000 People by Age Group, 1975-2020");
 
   //Labels for Axes
   var yearLabel = d3
@@ -97,7 +97,7 @@ d3.csv("traffic.csv", function (csv) {
     .attr("font-size", "12px")
     .attr("text-anchor", "end")
     .attr("transform", "rotate(-90)")
-    .text("Deaths");
+    .text("Death Rate per 100,000 People");
 
   /******************************************
   	
@@ -182,7 +182,7 @@ d3.csv("traffic.csv", function (csv) {
   chart1.append("g").call(brush);
 
   function updateChart(cutoff) {
-    data = csv.filter(d => d['Rate'] >= cutoff);
+    data = csv.filter(d => d['DNumber'] >= cutoff);
     console.log(data);
 
     let item = chart1.selectAll('.circles').data(data, d => [d.Year, d.Age]);
@@ -203,7 +203,7 @@ d3.csv("traffic.csv", function (csv) {
 
     itemEnter.merge(item)
       .attr('transform', function (d) {
-        return 'translate(' + xScale(d.Year) + ',' + yScale(d.DNumber) + ')';
+        return 'translate(' + xScale(d.Year) + ',' + yScale(d.Rate) + ')';
       });
   }
 
@@ -211,8 +211,8 @@ d3.csv("traffic.csv", function (csv) {
 
   var sliderSimple = d3
     .sliderBottom()
-    .min(minRate)
-    .max(maxRate)
+    .min(minDeaths)
+    .max(maxDeaths)
     .width(300)
     .ticks(5)
     .default(5)
@@ -249,7 +249,7 @@ d3.csv("traffic.csv", function (csv) {
       var coords = d3.brushSelection(this);
 
       var selected = chart1.selectAll('circle').filter(function (d) {
-        return insideBrush(coords, xScale(d.Year), yScale(d.DNumber));
+        return insideBrush(coords, xScale(d.Year), yScale(d.Rate));
       }).attr("class", function (d) {
         return whichAgeClass(d.Age);
       });
