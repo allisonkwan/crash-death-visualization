@@ -96,7 +96,7 @@ d3.csv("traffic.csv", function (csv) {
     .attr("y", 20)
     .attr("font-size", "12px")
     .attr("text-anchor", "end")
-    .attr("transform", "rotate(-90)")
+    .attr("transform", "translate(0, -50)rotate(-90)")
     .text("Death Rate per 100,000 People");
 
   /******************************************
