@@ -16,7 +16,8 @@ d3.csv("traffic.csv", function (csv) {
   }
 
   var data = csv;
-  var cutoff = 0;
+  var globalCutoff = 0;
+  var globalAgeGroup = 'All';
 
   //Cutoff
   var main = document.getElementById('chart5');
@@ -27,8 +28,11 @@ d3.csv("traffic.csv", function (csv) {
     .text('Filter Data')
     .on('click', function () {
       cutoff = Number(document.getElementById('value-simple').innerHTML);
-      console.log(cutoff);
-      updateChart(cutoff);
+      globalCutoff = cutoff;
+      var select = d3.select('#categorySelect').node();
+      var category = select.options[select.selectedIndex].value;
+      globalAgeGroup = category;
+      updateChart(category, cutoff);
     });
 
   var yearExtent = d3.extent(csv, function (row) {
@@ -181,8 +185,18 @@ d3.csv("traffic.csv", function (csv) {
   //IMPORTANT: Call brush before appending circles so tooltip & brush can coexist.
   chart1.append("g").call(brush);
 
-  function updateChart(cutoff) {
-    data = csv.filter(d => d['DNumber'] >= cutoff);
+  function updateChart(ageGroup, cutoff) {
+
+    if (ageGroup === 'All') {
+      data = csv.filter(function (d) {
+        return d.Age !== ageGroup && d.DNumber >= cutoff;
+      });
+    } else {
+      data = csv.filter(function (d) {
+        return d.Age === ageGroup && d.DNumber >= cutoff;
+      });
+    }
+
     console.log(data);
 
     let item = chart1.selectAll('.circles').data(data, d => [d.Year, d.Age]);
@@ -207,7 +221,7 @@ d3.csv("traffic.csv", function (csv) {
       });
   }
 
-  updateChart(cutoff);
+  updateChart('All', globalCutoff);
 
   var sliderSimple = d3
     .sliderBottom()
