@@ -6,6 +6,10 @@ d3.csv("traffic.csv", function (csv) {
   var minDeaths = Number.POSITIVE_INFINITY;
   var maxDeaths = Number.NEGATIVE_INFINITY;
 
+  // PULLING DATA FROM CSV
+  // ________________________
+
+  // Set data type of variables
   for (let i = 0; i < csv.length; ++i) {
     csv[i].Year = Number(csv[i].Year)
     csv[i].Population = Number(csv[i].Population);
@@ -15,11 +19,15 @@ d3.csv("traffic.csv", function (csv) {
     if (csv[i].DNumber > maxDeaths) maxDeaths = csv[i].DNumber;
   }
 
+  // Global variables
   var data = csv;
   var globalCutoff = 0;
   var globalAgeGroup = 'All';
 
-  //Cutoff
+  // FILTER USING USER INPUT
+  // ________________________
+
+  //Number of Deaths Cutoff and Age Filter
   var main = document.getElementById('chart5');
   d3.select(main)
     .append('p')
@@ -27,14 +35,21 @@ d3.csv("traffic.csv", function (csv) {
     .style("border", "1px solid black")
     .text('Filter Data')
     .on('click', function () {
+      // Get cutoff number
       cutoff = Number(document.getElementById('value-simple').innerHTML);
+      // Set cutoff
       globalCutoff = cutoff;
       var select = d3.select('#categorySelect').node();
+      // Set age group
       var category = select.options[select.selectedIndex].value;
       globalAgeGroup = category;
       updateChart(category, cutoff);
     });
 
+  // AXES SETUP
+  // ________________________
+
+  //Get min/max values of array for axes scaling
   var yearExtent = d3.extent(csv, function (row) {
     return row.Year;
   });
@@ -42,14 +57,16 @@ d3.csv("traffic.csv", function (csv) {
     return row.Rate;
   });
 
-  // Axis setup
+  // Domain sets min-max values, range sets size of axes
   var xScale = d3.scaleLinear().domain(yearExtent).range([50, 770]);
   var yScale = d3.scaleLinear().domain(rateExtent).range([770, 30]);
 
   var xAxis = d3.axisBottom().scale(xScale).tickFormat(d3.format("d"));
   var yAxis = d3.axisLeft().scale(yScale);
 
-  //Legend
+  // LEGEND
+  // ________________________
+
   d3.select("#AgeGroup1").append('circle').attr('r', '5px').attr('opacity', 0.6)
     .attr('transform', 'translate(5,7)')
     .attr('class', 'age-group-1');
@@ -65,6 +82,9 @@ d3.csv("traffic.csv", function (csv) {
   d3.select("#AgeGroup5").append('circle').attr('r', '5px').attr('opacity', 0.6)
     .attr('transform', 'translate(5,7)')
     .attr('class', 'age-group-5');
+
+  // SVG, AXES, & LABELLING
+  // ________________________
 
   //Create SVGs for charts
   var chart1 = d3
@@ -103,32 +123,18 @@ d3.csv("traffic.csv", function (csv) {
     .attr("transform", "translate(0, -50)rotate(-90)")
     .text("Death Rate per 100,000 People");
 
-  /******************************************
-  	
-    Create Circles for Each Scatterplot
-
-   ******************************************/
-
+  // Add axes to SVG
   chart1
     .append("g")
     .attr("transform", "translate(0," + (width - 30) + ")")
-    .call(xAxis)
-    .append("text")
-    .attr("class", "label")
-    .attr("x", width - 16)
-    .attr("y", -6)
-    .style("text-anchor", "end");
+    .call(xAxis);
 
   chart1
     .append("g")
     .attr("transform", "translate(50, 0)")
-    .call(yAxis)
-    .append("text")
-    .attr("transform", "rotate(-90)")
-    .attr("y", 6)
-    .attr("dy", ".71em")
-    .style("text-anchor", "end");
+    .call(yAxis);
 
+  // Check age group function
   function whichAgeClass(val) {
     if (val === '<13 years') {
       return 'age-group-1';
@@ -142,6 +148,9 @@ d3.csv("traffic.csv", function (csv) {
       return 'age-group-5';
     }
   }
+
+  // TOOLTIP
+  // ________________________
 
   var Tooltip = d3.select("#chart6")
     .append("div")
@@ -175,7 +184,9 @@ d3.csv("traffic.csv", function (csv) {
       .style("opacity", 0.8)
   }
 
-  // Brushing
+  // BRUSHING SETUP
+  // ________________________
+
   var brush = d3.brush()
     .extent([[0, 0], [width, height]])
     .on("start", brushstart)
@@ -185,8 +196,12 @@ d3.csv("traffic.csv", function (csv) {
   //IMPORTANT: Call brush before appending circles so tooltip & brush can coexist.
   chart1.append("g").call(brush);
 
+  // UPDATE CHART ON CHANGE
+  // ________________________
+
   function updateChart(ageGroup, cutoff) {
 
+    // Apply user filter input to data
     if (ageGroup === 'All') {
       data = csv.filter(function (d) {
         return d.Age !== ageGroup && d.DNumber >= cutoff;
@@ -199,15 +214,16 @@ d3.csv("traffic.csv", function (csv) {
 
     console.log(data);
 
+    // Assign data to data points
     let item = chart1.selectAll('.circles').data(data, d => [d.Year, d.Age]);
 
+    // Remove unused data points
     item.exit().remove();
 
+    // Bind data to placeholder data points
     var itemEnter = item.enter().append('g').attr('class', 'circles');
-    // .attr('transform', function (d) {
-    //   return 'translate(' + xScale(d.Year) + ',' + yScale(d.DNumber) + ')';
-    // });
 
+    // Apply tooltip function to data points
     itemEnter.append('circle').attr('r', '5px').attr('opacity', 0.6)
       .attr('class', function (d) {
         return whichAgeClass(d.Age);
@@ -215,14 +231,20 @@ d3.csv("traffic.csv", function (csv) {
       .on("mousemove", mousemove)
       .on("mouseout", mouseleave);
 
+    // Merge entered and updated data ponts
     itemEnter.merge(item)
       .attr('transform', function (d) {
         return 'translate(' + xScale(d.Year) + ',' + yScale(d.Rate) + ')';
       });
   }
 
+  // Initally call updateChart for all data
   updateChart('All', globalCutoff);
 
+  // SLIDER
+  // ________________________
+
+  // Slider
   var sliderSimple = d3
     .sliderBottom()
     .min(minDeaths)
@@ -234,6 +256,7 @@ d3.csv("traffic.csv", function (csv) {
       d3.select('p#value-simple').text(d3.format('.1f')(val));
     });
 
+  // Current slider data cutoff
   var gSimple = d3
     .select('div#slider-simple')
     .append('svg')
@@ -242,32 +265,39 @@ d3.csv("traffic.csv", function (csv) {
     .append('g')
     .attr('transform', 'translate(30,30)');
 
+  // Call slider to get current position of slider
   gSimple.call(sliderSimple);
-
   d3.select('p#value-simple').text(d3.format('.1f')(sliderSimple.value()));
 
+  // BRUSHING FUNCTIONALITY
+  // ________________________
+
+  // Set all circles to class 'non_brushed'
   function brushstart() {
     chart1.selectAll("circle").attr("class", "non_brushed");
     d3.select("#brush").call(brush.move, null); //using `.call()` to call the brush function on each elements
   }
 
+  // Target brushed area
   function highlightBrushedCircles() {
 
     // Get the extent or bounding box of the brush event, this is a 2x2 array
     var e = d3.event.selection;
     if (e) {
-      //Revert circles to initial style
+      //Revert circles to initial style (reset)
       chart1.selectAll('circle').attr("class", "non_brushed");
 
       //Select the instance of brush selection (access coordinates of the selection area)
       var coords = d3.brushSelection(this);
 
+      // Set brushed data back to original colors
       var selected = chart1.selectAll('circle').filter(function (d) {
         return insideBrush(coords, xScale(d.Year), yScale(d.Rate));
       }).attr("class", function (d) {
         return whichAgeClass(d.Age);
       });
 
+      // If no data is brushed, averaging is reset
       if (selected['_groups'][0].length >= 1) {
         clearInfo();
         updateInfo(selected.data());
@@ -277,6 +307,7 @@ d3.csv("traffic.csv", function (csv) {
     }
   }
 
+  // Reset data to original colors when there is no brushing
   function displayValues() {
     // If there is no longer an extent or bounding box then the brush has been removed
     if (!d3.event.selection) {
@@ -289,6 +320,7 @@ d3.csv("traffic.csv", function (csv) {
     }
   }
 
+  // Get brushed region coordinates
   function insideBrush(brush_coords, cx, cy) {
     var x0 = brush_coords[0][0],
       x1 = brush_coords[1][0],
@@ -304,6 +336,7 @@ d3.csv("traffic.csv", function (csv) {
     document.getElementById("myRate").textContent = "";
   }
 
+  // Set averages of brushed data
   function updateInfo(data) {
     let numElements = data.length;
     let sumYear = 0;
