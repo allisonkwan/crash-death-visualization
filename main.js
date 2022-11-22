@@ -42,6 +42,12 @@ d3.csv("traffic.csv", function (csv) {
     return row.Rate;
   });
 
+  // Varying circle radius based on number of deaths
+  var deathNumExtent = d3.extent(csv, function (row) {
+    return row.DNumber;
+  });
+  var circleRadiusScale = d3.scaleLinear().domain(deathNumExtent).range([5, 17]);
+
   // Axis setup
   var xScale = d3.scaleLinear().domain(yearExtent).range([50, 770]);
   var yScale = d3.scaleLinear().domain(rateExtent).range([770, 30]);
@@ -208,7 +214,10 @@ d3.csv("traffic.csv", function (csv) {
     //   return 'translate(' + xScale(d.Year) + ',' + yScale(d.DNumber) + ')';
     // });
 
-    itemEnter.append('circle').attr('r', '5px').attr('opacity', 0.6)
+    itemEnter.append('circle').attr('opacity', 0.6)
+      .attr('r', function (d) {
+        return circleRadiusScale(d.DNumber);
+      })
       .attr('class', function (d) {
         return whichAgeClass(d.Age);
       }).on("mouseover", mouseover)
