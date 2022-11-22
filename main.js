@@ -63,7 +63,7 @@ d3.csv("traffic.csv", function (csv) {
   });
   var circleRadiusScale = d3.scaleLinear().domain(deathNumExtent).range([5, 17]);
 
-  // Axis setup
+  // Domain sets min-max values, range sets size of axes
   var xScale = d3.scaleLinear().domain(yearExtent).range([50, 770]);
   var yScale = d3.scaleLinear().domain(rateExtent).range([770, 30]);
 
@@ -230,7 +230,10 @@ d3.csv("traffic.csv", function (csv) {
     var itemEnter = item.enter().append('g').attr('class', 'circles');
 
     // Apply tooltip function to data points
-    itemEnter.append('circle').attr('r', '5px').attr('opacity', 0.6)
+    itemEnter.append('circle').attr('opacity', 0.6)
+      .attr('r', function (d) {
+        return circleRadiusScale(d.DNumber);
+      })
       .attr('class', function (d) {
         return whichAgeClass(d.Age);
       }).on("mouseover", mouseover)
