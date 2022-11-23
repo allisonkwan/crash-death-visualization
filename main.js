@@ -24,6 +24,12 @@ d3.csv("traffic.csv", function (csv) {
   var globalCutoff = 0;
   var globalAgeGroup = 'All';
 
+  var lineData = d3.nest()
+    .key(function(d) {return d.Age})
+    .entries(data)
+
+  console.log(lineData)
+
   // FILTER USING USER INPUT
   // ________________________
 
@@ -231,7 +237,7 @@ d3.csv("traffic.csv", function (csv) {
       });
     }
 
-    console.log(data);
+    // console.log(data);
 
     // Assign data to data points
     let item = chart1.selectAll('.circles').data(data, d => [d.Year, d.Age]);
@@ -253,60 +259,70 @@ d3.csv("traffic.csv", function (csv) {
       .on("mousemove", mousemove)
       .on("mouseout", mouseleave);
 
-    chart1.append('path')
-      .datum(csv.filter(function (d) {
-        return d.Age === '<13 years' && d.DNumber >= cutoff;
-      }))
-      .attr('class', 'line')
-      .attr("d", line)
-      .style("fill", "none")
-      .style("stroke", "#ffce54")
-      .style("stroke-width", "5")
-      .style('opacity', '0.6');
+    lineData.forEach(function(d, i) {
+      var pathData = line(d.values);
+      console.log('line_' + whichAgeClass(d.key))
+
+      chart1.append('path')
+        .attr('class', 'line')
+        .attr("d", pathData)
+        .attr('class', 'line_' + whichAgeClass(d.key))
+    })
+
+    // chart1.append('path')
+    //   .datum(csv.filter(function (d) {
+    //     return d.Age === '<13 years' && d.DNumber >= cutoff;
+    //   }))
+    //   .attr('class', 'line')
+    //   .attr("d", line)
+    //   .style("fill", "none")
+    //   .style("stroke", "#ffce54")
+    //   .style("stroke-width", "5")
+    //   .style('opacity', '0.6');
     
-    chart1.append('path')
-      .datum(csv.filter(function (d) {
-        return d.Age === '13-19 years' && d.DNumber >= cutoff;
-      }))
-      .attr('class', 'line')
-      .attr("d", line)
-      .style("fill", "none")
-      .style("stroke", "#4fc1eb")
-      .style("stroke-width", "5")
-      .style('opacity', '0.6'); 
+    // chart1.append('path')
+    //   .datum(csv.filter(function (d) {
+    //     return d.Age === '13-19 years' && d.DNumber >= cutoff;
+    //   }))
+    //   .attr('class', 'line')
+    //   .attr("d", line)
+    //   .style("fill", "none")
+    //   .style("stroke", "#4fc1eb")
+    //   .style("stroke-width", "5")
+    //   .style('opacity', '0.6'); 
 
-    chart1.append('path')
-      .datum(csv.filter(function (d) {
-        return d.Age === '20-34 years' && d.DNumber >= cutoff;
-      }))
-      .attr('class', 'line')
-      .attr("d", line)
-      .style("fill", "none")
-      .style("stroke", "#a0d568")
-      .style("stroke-width", "5")
-      .style('opacity', '0.6');
+    // chart1.append('path')
+    //   .datum(csv.filter(function (d) {
+    //     return d.Age === '20-34 years' && d.DNumber >= cutoff;
+    //   }))
+    //   .attr('class', 'line')
+    //   .attr("d", line)
+    //   .style("fill", "none")
+    //   .style("stroke", "#a0d568")
+    //   .style("stroke-width", "5")
+    //   .style('opacity', '0.6');
 
-    chart1.append('path')
-      .datum(csv.filter(function (d) {
-        return d.Age === '35-69 years' && d.DNumber >= cutoff;
-      }))
-      .attr('class', 'line')
-      .attr("d", line)
-      .style("fill", "none")
-      .style("stroke", "#ed5564")
-      .style("stroke-width", "5")
-      .style('opacity', '0.6');
+    // chart1.append('path')
+    //   .datum(csv.filter(function (d) {
+    //     return d.Age === '35-69 years' && d.DNumber >= cutoff;
+    //   }))
+    //   .attr('class', 'line')
+    //   .attr("d", line)
+    //   .style("fill", "none")
+    //   .style("stroke", "#ed5564")
+    //   .style("stroke-width", "5")
+    //   .style('opacity', '0.6');
 
-    chart1.append('path')
-      .datum(csv.filter(function (d) {
-        return d.Age === '70+ years' && d.DNumber >= cutoff;
-      }))
-      .attr('class', 'line')
-      .attr("d", line)
-      .style("fill", "none")
-      .style("stroke", "#ac92eb")
-      .style("stroke-width", "5")
-      .style('opacity', '0.6');
+    // chart1.append('path')
+    //   .datum(csv.filter(function (d) {
+    //     return d.Age === '70+ years' && d.DNumber >= cutoff;
+    //   }))
+    //   .attr('class', 'line')
+    //   .attr("d", line)
+    //   .style("fill", "none")
+    //   .style("stroke", "#ac92eb")
+    //   .style("stroke-width", "5")
+    //   .style('opacity', '0.6');
 
     // Merge entered and updated data ponts
     itemEnter.merge(item)
