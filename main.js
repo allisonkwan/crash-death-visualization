@@ -241,12 +241,15 @@ d3.csv("traffic.csv", function (csv) {
 
     // Assign data to data points
     let item = chart1.selectAll('.circles').data(data, d => [d.Year, d.Age]);
+    let lineItem = chart1.selectAll('.lines').data(lineData, d => [d.Year, d.Age]);
 
     // Remove unused data points
     item.exit().remove();
+    lineItem.exit().remove();
 
     // Bind data to placeholder data points
     var itemEnter = item.enter().append('g').attr('class', 'circles');
+    var lineItemEnter = lineItem.enter().append('g').attr('class', 'lines');
 
     // Apply tooltip function to data points
     itemEnter.append('circle').attr('opacity', 0.6)
@@ -261,68 +264,19 @@ d3.csv("traffic.csv", function (csv) {
 
     lineData.forEach(function(d, i) {
       var pathData = line(d.values);
-      console.log('line_' + whichAgeClass(d.key))
-
-      chart1.append('path')
+  
+      if (ageGroup == d.key || ageGroup == 'All') {
+        lineItemEnter.append('path')
         .attr('class', 'line')
         .attr("d", pathData)
         .attr('class', 'line_' + whichAgeClass(d.key))
-    })
+      } 
+    }) 
 
-    // chart1.append('path')
-    //   .datum(csv.filter(function (d) {
-    //     return d.Age === '<13 years' && d.DNumber >= cutoff;
-    //   }))
-    //   .attr('class', 'line')
-    //   .attr("d", line)
-    //   .style("fill", "none")
-    //   .style("stroke", "#ffce54")
-    //   .style("stroke-width", "5")
-    //   .style('opacity', '0.6');
-    
-    // chart1.append('path')
-    //   .datum(csv.filter(function (d) {
-    //     return d.Age === '13-19 years' && d.DNumber >= cutoff;
-    //   }))
-    //   .attr('class', 'line')
-    //   .attr("d", line)
-    //   .style("fill", "none")
-    //   .style("stroke", "#4fc1eb")
-    //   .style("stroke-width", "5")
-    //   .style('opacity', '0.6'); 
-
-    // chart1.append('path')
-    //   .datum(csv.filter(function (d) {
-    //     return d.Age === '20-34 years' && d.DNumber >= cutoff;
-    //   }))
-    //   .attr('class', 'line')
-    //   .attr("d", line)
-    //   .style("fill", "none")
-    //   .style("stroke", "#a0d568")
-    //   .style("stroke-width", "5")
-    //   .style('opacity', '0.6');
-
-    // chart1.append('path')
-    //   .datum(csv.filter(function (d) {
-    //     return d.Age === '35-69 years' && d.DNumber >= cutoff;
-    //   }))
-    //   .attr('class', 'line')
-    //   .attr("d", line)
-    //   .style("fill", "none")
-    //   .style("stroke", "#ed5564")
-    //   .style("stroke-width", "5")
-    //   .style('opacity', '0.6');
-
-    // chart1.append('path')
-    //   .datum(csv.filter(function (d) {
-    //     return d.Age === '70+ years' && d.DNumber >= cutoff;
-    //   }))
-    //   .attr('class', 'line')
-    //   .attr("d", line)
-    //   .style("fill", "none")
-    //   .style("stroke", "#ac92eb")
-    //   .style("stroke-width", "5")
-    //   .style('opacity', '0.6');
+    lineItemEnter.merge(lineItem)
+    .attr('transform', function (d) {
+      return 'translate(' + xScale(d.Year) + ',' + yScale(d.Rate) + ')';
+    });
 
     // Merge entered and updated data ponts
     itemEnter.merge(item)
