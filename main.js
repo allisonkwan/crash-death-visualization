@@ -202,6 +202,19 @@ d3.csv("traffic.csv", function (csv) {
   //IMPORTANT: Call brush before appending circles so tooltip & brush can coexist.
   chart1.append("g").call(brush);
 
+  var line = d3.line()
+    .x(function(d) {return xScale(d.Year)})
+    .y(function(d) {return yScale(d.Rate)})
+    .curve(d3.curveMonotoneX)
+
+  // chart1.append('path')
+  // .datum(data)
+  // .attr('class', 'line')
+  // .attr("d", line)
+  // .style("fill", "none")
+  // .style("stroke", "blue")
+  // .style("stroke-width", "1.5");
+
   // UPDATE CHART ON CHANGE
   // ________________________
 
@@ -239,6 +252,61 @@ d3.csv("traffic.csv", function (csv) {
       }).on("mouseover", mouseover)
       .on("mousemove", mousemove)
       .on("mouseout", mouseleave);
+
+    chart1.append('path')
+      .datum(csv.filter(function (d) {
+        return d.Age === '<13 years' && d.DNumber >= cutoff;
+      }))
+      .attr('class', 'line')
+      .attr("d", line)
+      .style("fill", "none")
+      .style("stroke", "#ffce54")
+      .style("stroke-width", "5")
+      .style('opacity', '0.6');
+    
+    chart1.append('path')
+      .datum(csv.filter(function (d) {
+        return d.Age === '13-19 years' && d.DNumber >= cutoff;
+      }))
+      .attr('class', 'line')
+      .attr("d", line)
+      .style("fill", "none")
+      .style("stroke", "#4fc1eb")
+      .style("stroke-width", "5")
+      .style('opacity', '0.6'); 
+
+    chart1.append('path')
+      .datum(csv.filter(function (d) {
+        return d.Age === '20-34 years' && d.DNumber >= cutoff;
+      }))
+      .attr('class', 'line')
+      .attr("d", line)
+      .style("fill", "none")
+      .style("stroke", "#a0d568")
+      .style("stroke-width", "5")
+      .style('opacity', '0.6');
+
+    chart1.append('path')
+      .datum(csv.filter(function (d) {
+        return d.Age === '35-69 years' && d.DNumber >= cutoff;
+      }))
+      .attr('class', 'line')
+      .attr("d", line)
+      .style("fill", "none")
+      .style("stroke", "#ed5564")
+      .style("stroke-width", "5")
+      .style('opacity', '0.6');
+
+    chart1.append('path')
+      .datum(csv.filter(function (d) {
+        return d.Age === '70+ years' && d.DNumber >= cutoff;
+      }))
+      .attr('class', 'line')
+      .attr("d", line)
+      .style("fill", "none")
+      .style("stroke", "#ac92eb")
+      .style("stroke-width", "5")
+      .style('opacity', '0.6');
 
     // Merge entered and updated data ponts
     itemEnter.merge(item)
