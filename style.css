@@ -137,4 +137,6 @@ path.domain {
 
 .off {
 	stroke: gray !important;
+	stroke-width: 5;
+	fill: none;
 }

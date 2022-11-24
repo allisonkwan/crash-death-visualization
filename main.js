@@ -28,7 +28,7 @@ d3.csv("traffic.csv", function (csv) {
     .key(function(d) {return d.Age})
     .entries(data)
 
-  console.log(lineData)
+  // console.log(lineData)
 
   // FILTER USING USER INPUT
   // ________________________
@@ -237,13 +237,11 @@ d3.csv("traffic.csv", function (csv) {
       });
     }
 
-    // console.log(data);
-
-    // Assign data to data points
+    // Assign data to data points and lines
     let item = chart1.selectAll('.circles').data(data, d => [d.Year, d.Age]);
-    let lineItem = chart1.selectAll('.lines').data(lineData, d => [d.Year, d.Age]);
+    let lineItem = chart1.selectAll('.lines').data(lineData, d => [d.Age]);
 
-    // Remove unused data points
+    // Remove unused data points and lines
     item.exit().remove();
     lineItem.exit().remove();
 
@@ -262,24 +260,32 @@ d3.csv("traffic.csv", function (csv) {
       .on("mousemove", mousemove)
       .on("mouseout", mouseleave);
 
-    lineData.forEach(function(d, i) {
+    // Bind data to placeholder lines
+    lineData.forEach(function(d) {
+      console.log(lineData);
       var pathData = line(d.values);
-  
-      if (ageGroup == d.key || ageGroup == 'All') {
+
+      if (ageGroup === 'All') {
         lineItemEnter.append('path')
         .attr('class', 'line')
         .attr("d", pathData)
         .attr('class', 'line_' + whichAgeClass(d.key))
       } 
+  
+      if (ageGroup === d.key) {
+        lineItemEnter.append('path')
+        .attr('class', 'line')
+        .attr("d", pathData)
+        .attr('class', 'line_' + whichAgeClass(d.key))
+      }
     }) 
 
+    // Merged entered and updated lines
     lineItemEnter.merge(lineItem)
-    .attr('transform', function (d) {
-      return 'translate(' + xScale(d.Year) + ',' + yScale(d.Rate) + ')';
-    });
 
     // Merge entered and updated data ponts
     itemEnter.merge(item)
+      .selectAll('circle')
       .attr('transform', function (d) {
         return 'translate(' + xScale(d.Year) + ',' + yScale(d.Rate) + ')';
       });
