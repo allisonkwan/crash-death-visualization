@@ -168,6 +168,7 @@ d3.csv("traffic.csv", function (csv) {
     .append("div")
     .style("opacity", 0)
     .attr("class", "tooltip")
+    .style('width', '200px')
     .style("background-color", "white")
     .style("border", "solid")
     .style("border-width", "2px")

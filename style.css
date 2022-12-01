@@ -95,48 +95,42 @@ path.domain {
 }
 
 .line {
-	stroke-width: 5;
+	stroke-width: 2;
 	fill: none;
 	opacity: 0.6;
 }
 
 .line_age-group-1 {
 	stroke: #ffce54;
-	stroke-width: 5;
+	stroke-width: 2;
 	fill: none;
 	opacity: 0.6;
 }
 
 .line_age-group-2 {
 	stroke: #4fc1eb;
-	stroke-width: 5;
+	stroke-width: 2;
 	fill: none;
 	opacity: 0.6;
 }
 
 .line_age-group-3 {
 	stroke: #a0d568;
-	stroke-width: 5;
+	stroke-width: 2;
 	fill: none;
 	opacity: 0.6;
 }
 
 .line_age-group-4 {
 	stroke: #ed5564;
-	stroke-width: 5;
+	stroke-width: 2;
 	fill: none;
 	opacity: 0.6;
 }
 
 .line_age-group-5 {
 	stroke: #ac92eb;
-	stroke-width: 5;
+	stroke-width: 2;
 	fill: none;
 	opacity: 0.6;
-}
-
-.off {
-	stroke: gray !important;
-	stroke-width: 5;
-	fill: none;
 }
