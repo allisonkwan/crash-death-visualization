@@ -1,6 +1,8 @@
+// SVG dimensions
 var width = 800;
 var height = 800;
 
+// Pull vehicle crash data from CSV file
 d3.csv("traffic.csv", function (csv) {
 
   var minDeaths = Number.POSITIVE_INFINITY;
@@ -24,16 +26,15 @@ d3.csv("traffic.csv", function (csv) {
   var globalCutoff = 0;
   var globalAgeGroup = 'All';
 
+  // Create age key for line data
   var lineData = d3.nest()
     .key(function(d) {return d.Age})
     .entries(data)
 
-  // console.log(lineData)
-
   // FILTER USING USER INPUT
   // ________________________
 
-  //Number of Deaths Cutoff and Age Filter
+  //Number of Deaths Cutoff Function and Age Filter
   var main = document.getElementById('chart5');
   d3.select(main)
     .append('p')
@@ -98,7 +99,7 @@ d3.csv("traffic.csv", function (csv) {
   // SVG, AXES, & LABELLING
   // ________________________
 
-  //Create SVGs for charts
+  //Create SVG for chart
   var chart1 = d3
     .select("#chart1")
     .append("svg:svg")
@@ -209,18 +210,13 @@ d3.csv("traffic.csv", function (csv) {
   //IMPORTANT: Call brush before appending circles so tooltip & brush can coexist.
   chart1.append("g").call(brush);
 
+  // LINE SETUP
+  // ________________________
+
   var line = d3.line()
     .x(function(d) {return xScale(d.Year)})
     .y(function(d) {return yScale(d.Rate)})
     .curve(d3.curveMonotoneX)
-
-  // chart1.append('path')
-  // .datum(data)
-  // .attr('class', 'line')
-  // .attr("d", line)
-  // .style("fill", "none")
-  // .style("stroke", "blue")
-  // .style("stroke-width", "1.5");
 
   // UPDATE CHART ON CHANGE
   // ________________________
@@ -281,7 +277,7 @@ d3.csv("traffic.csv", function (csv) {
       }
     }) 
 
-    // Merged entered and updated lines
+    // Merge entered and updated lines
     lineItemEnter.merge(lineItem)
 
     // Merge entered and updated data ponts
