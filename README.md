@@ -6,6 +6,10 @@ Includes the following functionality:
 - Displays year, age group, population, deaths, and rate for any value that is hovered over.
 - Filters data based on a cutoff value for rate.
 
+View a demo of our visualization [here](https://youtu.be/M2sWbD5Tf5k).
+
+![Visualization](./Chart.PNG)
+
 Data found from the [U.S. Department of Transportation](https://www.iihs.org/topics/fatality-statistics/detail/yearly-snapshot).
 
 ## Run the Visualization
